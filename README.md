@@ -32,6 +32,15 @@ The full patch detects runs of art lines and zooms each run as a block, so it
 stays whole while the text stays full size (second and third screenshots
 above).
 
+### In-page links (Android 14 tablet, patched)
+
+Unpatched, tapping a contents link shows "unsupported url: #definitions" and
+the page doesn't move. Patched, it scrolls to the section:
+
+| Retipedia article contents | After tapping "Definitions" |
+|---|---|
+| <img src="screenshots/links-patched-1-contents.png" width="300"> | <img src="screenshots/links-patched-2-after-tap.png" width="300"> |
+
 ---
 
 ## Step 1: Get the patch files
