@@ -1,0 +1,10 @@
+# never commit signing keys, builds or data backups
+android/*.keystore
+android/keystore.pass
+*.apk
+*.idsig
+meshchatx-backup-*/
+__pycache__/
+*.pyc
+.DS_Store
+issues/lxmf-*.txt
