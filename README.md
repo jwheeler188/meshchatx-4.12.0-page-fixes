@@ -18,6 +18,20 @@ and stop if it's anything else.
 |---|---|---|
 | <img src="screenshots/before-fit-tiny-page.png" width="250"> | <img src="screenshots/after-fit-page.png" width="250"> | <img src="screenshots/after-retipedia-header.png" width="250"> |
 
+### Why the patch also zooms ASCII art
+
+Fixing only the width measurement makes text full size, but wide ASCII art
+then wraps like ordinary text and turns into a jumble on a phone. These were
+taken with that earlier version of the fix, before the art handling was added:
+
+| Width fix only: block-art banner scrambled | Width fix only: Retipedia header scrambled |
+|---|---|
+| <img src="screenshots/width-fix-only-scrambled-banner.png" width="250"> | <img src="screenshots/width-fix-only-scrambled-retipedia.png" width="250"> |
+
+The full patch detects runs of art lines and zooms each run as a block, so it
+stays whole while the text stays full size (second and third screenshots
+above).
+
 ---
 
 ## Step 1: Get the patch files
