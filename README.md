@@ -12,6 +12,12 @@ settings are not touched, and each platform has an undo step.
 These patches only work on MeshChatX **4.12.0**. The scripts check the version
 and stop if it's anything else.
 
+### Before and after (Android 10 phone, 360 px wide)
+
+| Stock 4.12.0: page shrunk to ~14% | Patched: full-size text, banners fit | Patched: Retipedia figlet header in one piece |
+|---|---|---|
+| <img src="screenshots/before-fit-tiny-page.png" width="250"> | <img src="screenshots/after-fit-page.png" width="250"> | <img src="screenshots/after-retipedia-header.png" width="250"> |
+
 ---
 
 ## Step 1: Get the patch files

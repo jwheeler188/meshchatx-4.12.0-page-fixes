@@ -9,7 +9,10 @@ Micron links that point to an anchor on the same page don't work. For example,
 the contents list on Retipedia articles uses `` `[Arts`#arts] ``. Clicking one
 shows an "unsupported url: #arts" error, and the page doesn't move.
 
-This worked in an earlier MeshChatX version; I'm not sure which one.
+It doesn't look like a recent regression. The click handling below is the same
+from at least v4.10.0 through v4.12.0. The micron parser is pinned to the same
+commit across those versions, and pages were already in the sandboxed frame in
+v4.9.3.
 
 ## How to reproduce
 
