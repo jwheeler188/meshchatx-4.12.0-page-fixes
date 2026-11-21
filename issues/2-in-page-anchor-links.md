@@ -9,10 +9,20 @@ Micron links that point to an anchor on the same page don't work. For example,
 the contents list on Retipedia articles uses `` `[Arts`#arts] ``. Clicking one
 shows an "unsupported url: #arts" error, and the page doesn't move.
 
-It doesn't look like a recent regression. The click handling below is the same
-from at least v4.10.0 through v4.12.0. The micron parser is pinned to the same
-commit across those versions, and pages were already in the sandboxed frame in
-v4.9.3.
+**This is a regression from v4.8.6** (2026-09-07):
+
+- **v4.8.0 – v4.8.5:** anchors worked. The micron parser has supported anchors
+  since RFnexus/micron-parser-js `3763cb8`, pinned from v4.8.0. Pages were drawn
+  in the main window, and `handleRichHtmlLinkClick()` in `NomadRichHtmlLinks.js`
+  checked `#` links (`a[href^="#"]`) and scrolled to them before its
+  `openNode` check.
+- **v4.8.6:** page drawing moved into the `NomadCrashTab` frame, which has its
+  own `onClick()`. That handler checks `[data-action="openNode"]` first. The
+  micron parser marks every link, including `#` links, with
+  `data-action="openNode"`, so in-page links are sent to the parent and never
+  reach the frame's `#`-scroll code further down.
+- **v4.8.6 – v4.12.0:** the same ordering in every release, for both the
+  JavaScript and WebAssembly micron renderers.
 
 ## How to reproduce
 
@@ -32,8 +42,9 @@ target element with that id is inside the frame's own document.
 
 ## Suggested fix
 
-In `onClick()`, handle same-page anchors inside the frame before posting the
-navigation:
+In the frame's `onClick()`, handle same-page anchors before posting the
+navigation, as the pre-4.8.6 `handleRichHtmlLinkClick()` did. Moving the
+existing `a[href]` `#` branch above the `openNode` branch would also work:
 
 ```js
 const node = t.closest('[data-action="openNode"]');
