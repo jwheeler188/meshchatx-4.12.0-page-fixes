@@ -84,6 +84,17 @@ Also, when fit does scale the page, `.nodeContainer { max-width: 100% }` keeps
 `root.style.maxWidth = "none"` and `root.style.width = 100 / scale + "%"`, so
 the scaled page still fills the screen.
 
+## Very large pages
+
+Fit mode measures every element under `#root` (rect and `scrollWidth`) and
+then repeats that for up to four scale corrections. On a whole book opened in
+one piece (a 2.6 MB Gutenberg page from Retipedia, about 670,000 elements),
+stock 4.12.0 takes about 10 s to render and another 16 s for the fit pass,
+and ends at the 0.05 minimum scale. Because the frame shares the app's web
+process, the whole MeshChatX window stops responding during that time.
+Skipping the fit measurement above a size limit (I use 20,000 elements) keeps
+such pages usable; re-fitting the same book then takes about 60 ms.
+
 ## Tested
 
 I patched the built `nomad-crash-tab-*.js` along these lines and tested it on

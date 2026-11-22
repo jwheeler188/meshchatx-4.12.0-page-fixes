@@ -392,6 +392,9 @@ Both patches edit a single file, the page viewer script
     counts as art if it has box-drawing characters, or if fewer than 25% of
     its non-space characters are letters or digits.
   - It scales the whole page only for genuinely wide visible content.
+  - It skips all of this on very large pages (more than 20,000 elements, such
+    as a whole book opened in one piece). Measuring every element there would
+    freeze the app for minutes; those pages are drawn at normal width instead.
 - The Linux and Android scripts also give the patched script a new filename
   and update the two files that reference it. The app tells devices to cache
   this script for a year, so an update with the same name would keep showing

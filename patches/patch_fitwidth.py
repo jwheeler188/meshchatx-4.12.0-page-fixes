@@ -17,6 +17,8 @@
 #     (rect widths; scrollWidth only where overflow is visible; .Mu-sr and
 #     clipped elements skipped), scale the page by screen/width (min 0.3) and
 #     widen #root by 1/scale so prose still wraps to the full screen width.
+# Pages with more than 20,000 elements (e.g. a whole book) are not measured
+# at all: measuring every element would freeze the app for minutes.
 # Switching mode clears the zoom/width again.
 #
 #   python3 patch_fitwidth.py <dir containing nomad-crash-tab-*.js>
@@ -24,7 +26,7 @@
 # Run AFTER patch_anchor.py (which restores the pristine .orig first and keeps
 # the only backup); install.sh and android/build_apk.py do both in order.
 import sys, os, glob
-MARK = "/*fit-v4*/"
+MARK = "/*fit-v5*/"
 START = 'const e=document.documentElement.clientWidth;let n=function(){'
 END = 'r.style.marginBottom=-(1-a)*r.scrollHeight+"px"}'
 RESET_OLD = 'r.style.width="",delete r.dataset.fitScale,'
@@ -32,6 +34,9 @@ RESET_NEW = ('r.style.width="",delete r.dataset.fitScale,r.style.maxWidth="",'
              'r.querySelectorAll("[data-fit-zoom]").forEach(t=>{t.style.zoom="",delete t.dataset.fitZoom}),')
 NEW = (MARK +
  'const e=document.documentElement.clientWidth;if(e<=0)return;'
+ # very large pages (whole books: 600k+ elements) would block the UI for
+ # minutes; draw them at natural width without measuring
+ 'if(r.getElementsByTagName("*").length>20000)return;'
  # 1. art runs
  'const A=[...r.querySelectorAll("div")].filter(t=>!t.querySelector("div")&&"separator"!==t.getAttribute("role")&&(x=>{if(/[─-▟]{3}/.test(x))return!0;const n=x.replace(/\\s/g,"");return n.length>0&&(n.match(/[\\p{L}\\p{N}]/gu)||[]).length<.25*n.length})(t.textContent||""));'
  'const G=[];let p=null;for(const t of A){p&&t.previousElementSibling===p?G[G.length-1].push(t):G.push([t]);p=t}'
