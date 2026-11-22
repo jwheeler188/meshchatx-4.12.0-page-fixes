@@ -395,6 +395,9 @@ Both patches edit a single file, the page viewer script
   - It skips all of this on very large pages (more than 20,000 elements, such
     as a whole book opened in one piece). Measuring every element there would
     freeze the app for minutes; those pages are drawn at normal width instead.
+  - It checks the page again 0.4 s and 1.5 s after each fit. On macOS (WebKit)
+    the text can settle slightly wider after the first pass, which left some
+    art headers wrapped across extra lines.
 - The Linux and Android scripts also give the patched script a new filename
   and update the two files that reference it. The app tells devices to cache
   this script for a year, so an update with the same name would keep showing

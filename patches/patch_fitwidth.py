@@ -19,20 +19,26 @@
 #     widen #root by 1/scale so prose still wraps to the full screen width.
 # Pages with more than 20,000 elements (e.g. a whole book) are not measured
 # at all: measuring every element would freeze the app for minutes.
-# Switching mode clears the zoom/width again.
+# Each fit re-checks itself 0.4 s and 1.5 s later, because WebKit may finish
+# laying out text after the first pass. Switching mode clears the zoom/width again.
 #
 #   python3 patch_fitwidth.py <dir containing nomad-crash-tab-*.js>
 # Exit: 0 patched, 3 already patched, 2 pattern not found.
 # Run AFTER patch_anchor.py (which restores the pristine .orig first and keeps
 # the only backup); install.sh and android/build_apk.py do both in order.
 import sys, os, glob
-MARK = "/*fit-v5*/"
+MARK = "/*fit-v6*/"
 START = 'const e=document.documentElement.clientWidth;let n=function(){'
 END = 'r.style.marginBottom=-(1-a)*r.scrollHeight+"px"}'
 RESET_OLD = 'r.style.width="",delete r.dataset.fitScale,'
 RESET_NEW = ('r.style.width="",delete r.dataset.fitScale,r.style.maxWidth="",'
              'r.querySelectorAll("[data-fit-zoom]").forEach(t=>{t.style.zoom="",delete t.dataset.fitZoom}),')
 NEW = (MARK +
+ # WebKit (macOS/iOS app) can lay text out again after the fit pass (font
+ # fallback for block characters) without a resize or fonts event, leaving
+ # art too wide and wrapped. Re-check twice shortly after each fit.
+ 'if(!window.__mcxFitLate){window.__mcxFitLate=1;setTimeout(()=>{"fit"===o&&i()},400);'
+ 'setTimeout(()=>{"fit"===o&&i();window.__mcxFitLate=0},1500)}'
  'const e=document.documentElement.clientWidth;if(e<=0)return;'
  # very large pages (whole books: 600k+ elements) would block the UI for
  # minutes; draw them at natural width without measuring
